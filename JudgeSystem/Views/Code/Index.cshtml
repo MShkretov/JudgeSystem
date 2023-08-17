@@ -76,7 +76,7 @@
         <div class="task-description">
             <h2>Sum of Two Numbers</h2>
             <p>Write a program that takes two numbers as input and calculates their sum.</p>
-            <a href="#" download>Download Description</a>
+            <a class="download-link" href="/Documents/SumDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
         <h2>Code Editor</h2>
@@ -98,7 +98,7 @@
         <div class="task-description">
             <h2>Find the Maximum</h2>
             <p>Write a program that takes three numbers as input and finds the maximum among them.</p>
-            <a href="#" download>Download Description</a>
+            <a class="download-link" href="/Documents/FindTheMaximumDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
         <h2>Code Editor</h2>
@@ -120,7 +120,7 @@
         <div class="task-description">
             <h2>Calculate Factorial</h2>
             <p>Write a program that calculates the factorial of a given positive integer.</p>
-            <a href="#" download>Download Description</a>
+            <a class="download-link" href="/Documents/CalculateFactorialDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
         <h2>Code Editor</h2>
@@ -142,7 +142,7 @@
         <div class="task-description">
             <h2>Check Prime Number</h2>
             <p>Write a program that checks whether a given number is a prime number or not..</p>
-            <a href="#" download>Download Description</a>
+            <a class="download-link" href="/Documents/CheckPrimeNumberDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
         <h2>Code Editor</h2>
@@ -156,7 +156,7 @@
         <div class="result-points">
             Result: <span class="points">0</span> points
         </div>
-    </div>
+    </div>  
 
     <div class="task-container">
         <h1>Code Judge Platform</h1>
@@ -164,7 +164,7 @@
         <div class="task-description">
             <h2>Reverse String</h2>
             <p>Write a program that takes a string as input and outputs the reverse of the string..</p>
-            <a href="#" download>Download Description</a>
+            <a class="download-link" href="/Documents/ReverseStringDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
         <h2>Code Editor</h2>
@@ -181,61 +181,7 @@
     </div>
 
     <script>
-        const tasks = [
-            {
-                description: "Sum of Two Numbers",
-                examples: [
-                    { input: "3 2", output: "5" },
-                    { input: "5 7", output: "12" }
-                ]
-            },
-            // Add more tasks and examples...
-        ];
-
-        async function runCode(taskIndex) {
-            const code = document.querySelectorAll(".code-editor")[taskIndex].value;
-            const input = tasks[taskIndex].examples[0].input; // Take the first example input
-
-            // Add input validation here
-            if (!isValidInput(input)) {
-                alert("Invalid input. Please enter a valid input.");
-                return;
-            }
-
-            const output = executeCode(code, input);
-
-            const outputElement = document.querySelectorAll(".output-area")[taskIndex];
-            const pointsElement = document.querySelectorAll(".points")[taskIndex];
-
-            outputElement.textContent = output;
-
-            // Compare output with expected output
-            const expectedOutput = tasks[taskIndex].examples[0].output;
-            if (output.trim() === expectedOutput) {
-                pointsElement.textContent = "20";
-            } else {
-                pointsElement.textContent = "0";
-            }
-        }
-
-        // Add input validation function
-        function isValidInput(input) {
-            // Implement your input validation logic here
-            // For example, check if the input contains valid numbers, etc.
-            return true; // Return true if input is valid, false otherwise
-        }
-
-        // Simulate code execution with the given input and return output
-        function executeCode(code, input) {
-            // Replace this with your actual logic to execute the user's code
-            // For this example, let's simulate the execution
-            return "Output: Result from code execution.";
-        }
-
-        const runButtons = document.querySelectorAll(".run-button");
-        runButtons.forEach((button, index) => {
-            button.addEventListener("click", () => runCode(index));
-        });
+      
     </script>
 </body>
 </html>

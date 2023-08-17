@@ -1,7 +1,7 @@
 ﻿using JudgeSystem.Contracts;
 using JudgeSystem.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace JudgeSystem.Controllers
 {

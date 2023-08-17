@@ -5,6 +5,26 @@
       "PackagePath": "staticwebassets\\JudgeSystem.bundle.scp.css"
     },
     {
+      "Id": "D:\\visual\\JudgeSystem\\JudgeSystem\\wwwroot\\Documents\\CalculateFactorialDescription.docx",
+      "PackagePath": "staticwebassets\\Documents\\CalculateFactorialDescription.docx"
+    },
+    {
+      "Id": "D:\\visual\\JudgeSystem\\JudgeSystem\\wwwroot\\Documents\\CheckPrimeNumberDescription.docx",
+      "PackagePath": "staticwebassets\\Documents\\CheckPrimeNumberDescription.docx"
+    },
+    {
+      "Id": "D:\\visual\\JudgeSystem\\JudgeSystem\\wwwroot\\Documents\\FindTheMaximumDescription.docx",
+      "PackagePath": "staticwebassets\\Documents\\FindTheMaximumDescription.docx"
+    },
+    {
+      "Id": "D:\\visual\\JudgeSystem\\JudgeSystem\\wwwroot\\Documents\\ReverseStringDescription.docx",
+      "PackagePath": "staticwebassets\\Documents\\ReverseStringDescription.docx"
+    },
+    {
+      "Id": "D:\\visual\\JudgeSystem\\JudgeSystem\\wwwroot\\Documents\\SumDescription.docx",
+      "PackagePath": "staticwebassets\\Documents\\SumDescription.docx"
+    },
+    {
       "Id": "D:\\visual\\JudgeSystem\\JudgeSystem\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
