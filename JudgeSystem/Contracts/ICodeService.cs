@@ -5,6 +5,6 @@ namespace JudgeSystem.Contracts
     public interface ICodeService
     {
         List<TaskModel> GetTasks();
-        Task<CodeExecutionResult> RunCodeAndCheckOutputAsync(int taskIndex, string userCode, string input);
+        Task<CodeExecutionResult> RunCodeAndCheckOutputAsync(CodeSubmissionModel submission);
     }
 }

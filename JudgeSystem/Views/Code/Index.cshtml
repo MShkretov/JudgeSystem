@@ -79,10 +79,17 @@
             <a class="download-link" href="/Documents/SumDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
-        <h2>Code Editor</h2>
-        <textarea class="code-editor" rows="10" cols="50"></textarea>
+        <form method="post" action="/Code/RunCode">
+            <input type="hidden" name="taskIndex" value="0" />
 
-        <button class="run-button">Run Code</button>
+            <!-- Add a textarea for user's code -->
+            <h2>Code Editor</h2>
+            <textarea class="code-editor user-code" name="userCode" rows="10" cols="50"></textarea>
+
+            <input type="hidden" name="input" value="" />
+
+            <button type="submit" class="run-button">Run Code</button>
+        </form>
 
         <h2>Output</h2>
         <pre class="output-area"></pre>
@@ -101,10 +108,17 @@
             <a class="download-link" href="/Documents/FindTheMaximumDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
-        <h2>Code Editor</h2>
-        <textarea class="code-editor" rows="10" cols="50"></textarea>
+        <form method="post" action="/Code/RunCode">
+            <input type="hidden" name="taskIndex" value="1" />
 
-        <button class="run-button">Run Code</button>
+            <!-- Add a textarea for user's code -->
+            <h2>Code Editor</h2>
+            <textarea class="code-editor user-code" name="userCode" rows="10" cols="50"></textarea>
+
+            <input type="hidden" name="input" value="" />
+
+            <button type="submit" class="run-button">Run Code</button>
+        </form>
 
         <h2>Output</h2>
         <pre class="output-area"></pre>
@@ -123,10 +137,17 @@
             <a class="download-link" href="/Documents/CalculateFactorialDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
-        <h2>Code Editor</h2>
-        <textarea class="code-editor" rows="10" cols="50"></textarea>
+        <form method="post" action="/Code/RunCode">
+            <input type="hidden" name="taskIndex" value="2" />
 
-        <button class="run-button">Run Code</button>
+            <!-- Add a textarea for user's code -->
+            <h2>Code Editor</h2>
+            <textarea class="code-editor user-code" name="userCode" rows="10" cols="50"></textarea>
+
+            <input type="hidden" name="input" value="" />
+
+            <button type="submit" class="run-button">Run Code</button>
+        </form>
 
         <h2>Output</h2>
         <pre class="output-area"></pre>
@@ -145,10 +166,17 @@
             <a class="download-link" href="/Documents/CheckPrimeNumberDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
-        <h2>Code Editor</h2>
-        <textarea class="code-editor" rows="10" cols="50"></textarea>
+        <form method="post" action="/Code/RunCode">
+            <input type="hidden" name="taskIndex" value="3" />
 
-        <button class="run-button">Run Code</button>
+            <!-- Add a textarea for user's code -->
+            <h2>Code Editor</h2>
+            <textarea class="code-editor user-code" name="userCode" rows="10" cols="50"></textarea>
+
+            <input type="hidden" name="input" value="" />
+
+            <button type="submit" class="run-button">Run Code</button>
+        </form>
 
         <h2>Output</h2>
         <pre class="output-area"></pre>
@@ -167,10 +195,17 @@
             <a class="download-link" href="/Documents/ReverseStringDescription.docx" download>Download Description (DOCX)</a>
         </div>
 
-        <h2>Code Editor</h2>
-        <textarea class="code-editor" rows="10" cols="50"></textarea>
+        <form method="post" action="/Code/RunCode">
+            <input type="hidden" name="taskIndex" value="4" />
 
-        <button class="run-button">Run Code</button>
+            <!-- Add a textarea for user's code -->
+            <h2>Code Editor</h2>
+            <textarea class="code-editor user-code" name="userCode" rows="10" cols="50"></textarea>
+
+            <input type="hidden" name="input" value="" />
+
+            <button type="submit" class="run-button">Run Code</button>
+        </form>
 
         <h2>Output</h2>
         <pre class="output-area"></pre>
@@ -181,40 +216,6 @@
     </div>
 
     <script>
-        async function runCode(taskIndex) {
-            const codeEditor = document.querySelectorAll(".code-editor")[taskIndex];
-            const input = "input data here"; // Replace with actual input data
-
-            try {
-                const response = await fetch("/Code/RunCode", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        taskIndex: taskIndex,
-                        userCode: codeEditor.value,
-                        input: input,
-                    }),
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    const outputArea = document.querySelectorAll(".output-area")[taskIndex];
-                    outputArea.textContent = result.output; // Display the output in the output area
-                } else {
-                    console.error("Request failed with status:", response.status);
-                }
-            } catch (error) {
-                console.error("Error occurred while fetching data from server:", error);
-            }
-        }
-
-        // Add event listeners to the "Run Code" buttons
-        const runButtons = document.querySelectorAll(".run-button");
-        runButtons.forEach((button, index) => {
-            button.addEventListener("click", () => runCode(index));
-        });
     </script>
 </body>
 </html>

@@ -2,7 +2,10 @@
 using JudgeSystem.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
-using System.Reflection;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace JudgeSystem.Services
 {
@@ -12,27 +15,47 @@ namespace JudgeSystem.Services
 
         public CodeService()
         {
-            // Initialize tasks (you can load this from a data source)
             _tasks = InitializeTasks();
         }
 
-        public async Task<CodeExecutionResult> RunCodeAndCheckOutputAsync(int taskIndex, string userCode, string input)
+        public async Task<CodeExecutionResult> RunCodeAndCheckOutputAsync(CodeSubmissionModel submission)
         {
-            if (taskIndex < 0 || taskIndex >= _tasks.Count)
+            if (submission.TaskIndex < 0 || submission.TaskIndex >= _tasks.Count)
             {
                 return new CodeExecutionResult { Output = "Invalid task index", Points = 0 };
             }
 
-            var task = _tasks[taskIndex];
-            var expectedOutput = task.ExpectedOutputs.FirstOrDefault();
+            var task = _tasks[submission.TaskIndex];
 
-            // Here you would execute the user's code using a compiler/interpreter
-            // For example, if you're dealing with C# code, you can use Roslyn to execute the code
-            string actualOutput = await ExecuteUserCodeAsync(userCode, input);
+            try
+            {
+                // Compile the user code
+                var compilation = CSharpCompilation.Create("UserCode")
+                    .WithOptions(new CSharpCompilationOptions(OutputKind.ConsoleApplication))
+                    .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+                    .AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(submission.UserCode));
 
-            var points = (actualOutput == expectedOutput) ? 20 : 0;
+                using var memoryStream = new System.IO.MemoryStream();
+                using var outputStream = new System.IO.StreamWriter(memoryStream);
 
-            return new CodeExecutionResult { Output = actualOutput, Points = points };
+                var result = compilation.Emit(outputStream.BaseStream);
+
+                if (!result.Success)
+                {
+                    return new CodeExecutionResult { Output = string.Join(Environment.NewLine, result.Diagnostics), Points = 0 };
+                }
+
+                string actualOutput = await ExecuteWithInputAsync(submission.UserCode, task.ExampleInputs[0]);
+                string expectedOutput = task.ExpectedOutputs[0];
+
+                int points = (actualOutput.Trim() == expectedOutput.Trim()) ? 20 : 0;
+
+                return new CodeExecutionResult { Output = actualOutput, Points = points };
+            }
+            catch (Exception ex)
+            {
+                return new CodeExecutionResult { Output = "Exception: " + ex.Message, Points = 0 };
+            }
         }
 
         public List<TaskModel> GetTasks()
@@ -40,66 +63,115 @@ namespace JudgeSystem.Services
             return _tasks;
         }
 
-        private async Task<string> ExecuteUserCodeAsync(string code, string input)
+        private async Task<string> ExecuteWithInputAsync(string code, string input)
         {
-            string output = "Error executing code";
-
             try
             {
-                var syntaxTree = SyntaxFactory.ParseSyntaxTree(code);
+                // Compile the user code
                 var compilation = CSharpCompilation.Create("UserCode")
-                                                   .WithOptions(new CSharpCompilationOptions(OutputKind.ConsoleApplication))
-                                                   .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
-                                                   .AddSyntaxTrees(syntaxTree);
+                    .WithOptions(new CSharpCompilationOptions(OutputKind.ConsoleApplication))
+                    .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+                    .AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(code));
 
                 using var memoryStream = new MemoryStream();
                 using var outputStream = new StreamWriter(memoryStream);
 
                 var result = compilation.Emit(outputStream.BaseStream);
 
-                if (result.Success)
+                if (!result.Success)
                 {
-                    var assembly = Assembly.Load(memoryStream.GetBuffer());
-                    var entryPoint = assembly.EntryPoint;
-
-                    using var inputReader = new StringReader(input);
-                    using var consoleOutput = new StringWriter();
-
-                    Console.SetIn(inputReader);
-                    Console.SetOut(consoleOutput);
-
-                    entryPoint.Invoke(null, new object[] { new string[] { } });
-
-                    output = consoleOutput.ToString();
+                    return string.Join(Environment.NewLine, result.Diagnostics);
                 }
-                else
+
+                // Create a new process to run the compiled code
+                var processStartInfo = new ProcessStartInfo
                 {
-                    output = string.Join(Environment.NewLine, result.Diagnostics);
+                    FileName = "dotnet",
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                var process = new Process
+                {
+                    StartInfo = processStartInfo
+                };
+
+                process.Start();
+
+                // Redirect the standard input of the process
+                using (var writer = process.StandardInput)
+                {
+                    if (writer.BaseStream.CanWrite)
+                    {
+                        await writer.WriteLineAsync(input);
+                        writer.Flush(); // Ensure buffered data is written
+                    }
                 }
+
+                // Read the output and error streams
+                string output = await process.StandardOutput.ReadToEndAsync();
+                string error = await process.StandardError.ReadToEndAsync();
+
+                process.WaitForExit();
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    return "Error: " + error;
+                }
+
+                return output;
             }
             catch (Exception ex)
             {
-                output = "Exception: " + ex.Message;
+                return "Exception: " + ex.Message;
             }
-
-            return output;
         }
+
 
         private List<TaskModel> InitializeTasks()
         {
-            // Initialize tasks with descriptions, example inputs, and expected outputs
-            // You can load this from a data source or hard-code them here
-            // For simplicity, let's hard-code some tasks
             return new List<TaskModel>
-            {
-                new TaskModel
-                {
-                    Description = "Sum of Two Numbers",
-                    ExampleInputs = new List<string> { "2 3" },
-                    ExpectedOutputs = new List<string> { "5" }
-                },
-                // Add more tasks here...
-            };
+    {
+        new TaskModel
+        {
+            Description = "Sum of Two Numbers",
+            ExampleInputs = new List<string> { "2 3" },
+            ExpectedOutputs = new List<string> { "5" }
+        },
+        new TaskModel
+        {
+            Description = "Find the Maximum",
+            ExampleInputs = new List<string> { "4 7 2" },
+            ExpectedOutputs = new List<string> { "7" }
+        },
+        new TaskModel
+        {
+            Description = "Calculate Factorial",
+            ExampleInputs = new List<string> { "5" },
+            ExpectedOutputs = new List<string> { "120" }
+        },
+        new TaskModel
+        {
+            Description = "Check Prime Number",
+            ExampleInputs = new List<string> { "7" },
+            ExpectedOutputs = new List<string> { "Prime" }
+        },
+        new TaskModel
+        {
+            Description = "Reverse String",
+            ExampleInputs = new List<string> { "hello" },
+            ExpectedOutputs = new List<string> { "olleh" }
+        }
+
+    };
+        }
+
+            List<TaskModel> ICodeService.GetTasks()
+        {
+            return _tasks;
         }
     }
 }

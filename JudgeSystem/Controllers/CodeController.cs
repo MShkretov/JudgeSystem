@@ -22,9 +22,9 @@ namespace JudgeSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RunCode(int taskIndex, string userCode, string input)
+        public async Task<IActionResult> RunCode(CodeSubmissionModel submission)
         {
-            var result = await _codeService.RunCodeAndCheckOutputAsync(taskIndex, userCode, input);
+            var result = await _codeService.RunCodeAndCheckOutputAsync(submission);
             return Json(result);
         }
     }
